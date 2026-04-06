@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cute Floating To-Do</title>
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background:linear-gradient(180deg,#ffd6ec,#ffe9c9);
+  overflow:hidden;
+}
+.card{
+  background:white;
+  padding:28px 32px;
+  border-radius:24px;
+  width:320px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.12);
+  position:relative;
+  z-index:2;
+}
+h1{
+  font-size:22px;
+  margin-bottom:18px;
+  text-align:center;
+}
+ul{
+  list-style:none;
+  padding:0;
+  margin:0 0 16px 0;
+}
+li{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 0;
+  font-size:15px;
+}
+input[type="text"]{
+  width:100%;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid #eee;
+  outline:none;
+}
+button{
+  margin-top:10px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  background:#ff8ac6;
+  color:white;
+  cursor:pointer;
+  font-weight:600;
+}
+button:hover{
+  opacity:0.9;
+}
+/* floating emojis */
+.float{
+  position:absolute;
+  font-size:28px;
+  animation:floatUp linear infinite;
+  opacity:0.9;
+}
+@keyframes floatUp{
+  from{ transform:translateY(120vh) rotate(0deg); }
+  to{ transform:translateY(-20vh) rotate(360deg); }
+}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>&#127808 To-Do &#x1F380</h1>
+<ul id="list"></ul>
+<input id="taskInput" placeholder="Add a task..." />
+<button onclick="addTask()">Add task</button>
+</div>
+<script>
+function addTask(){
+  const input=document.getElementById('taskInput');
+  const text=input.value.trim();
+  if(!text) return;
+
+  const li=document.createElement('li');
+
+  const checkbox=document.createElement('input');
+  checkbox.type='checkbox';
+  checkbox.style.width='18px';
+  checkbox.style.height='18px';
+
+  const span=document.createElement('span');
+  span.textContent=text;
+
+  checkbox.onchange=()=>{
+    span.style.textDecoration=checkbox.checked?'line-through':'none';
+    span.style.opacity=checkbox.checked?'0.5':'1';
+  };
+
+  li.appendChild(checkbox);
+  li.appendChild(span);
+
+  document.getElementById('list').appendChild(li);
+  input.value='';
+}
+
+const input=document.getElementById('taskInput');
+input.addEventListener('keypress',function(e){ if(e.key==='Enter') addTask(); });
+
+/* floating pancakes and money */
+const emojis=['&#x1F380;','&#x1F9F8;','&#x1F9F8;','&#128184;','&#128184;','&#x1F380'];
+function createFloat(){
+  const el=document.createElement('div');
+  el.className='float';
+  el.innerHTML=emojis[Math.floor(Math.random()*emojis.length)];
+  el.style.left=Math.random()*100+'vw';
+  el.style.animationDuration=(6+Math.random()*8)+'s';
+  el.style.fontSize=(24+Math.random()*20)+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.remove(); },14000);
+}
+setInterval(createFloat,900);
+</script>
+</body>
+</html>
