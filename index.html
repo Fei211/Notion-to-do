@@ -38,17 +38,34 @@ li{
   display:flex;
   align-items:center;
   gap:10px;
-  padding:6px 0;
+  padding:8px 0;
   font-size:15px;
+  border-bottom: 1px solid #fff5f9;
+}
+/* This makes the text grow so the delete button stays on the right */
+.task-text {
+  flex-grow: 1;
+}
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+.delete-btn:hover {
+  opacity: 1;
 }
 input[type="text"]{
   width:100%;
+  box-sizing: border-box; /* keeps input from poking out of the card */
   padding:10px;
   border-radius:12px;
   border:1px solid #eee;
   outline:none;
 }
-button{
+button#addBtn{
   margin-top:10px;
   width:100%;
   padding:10px;
@@ -59,29 +76,32 @@ button{
   cursor:pointer;
   font-weight:600;
 }
-button:hover{
+button#addBtn:hover{
   opacity:0.9;
 }
 /* floating emojis */
 .float{
   position:absolute;
   font-size:28px;
-  animation:floatUp linear infinite;
+  animation:floatUp linear forwards; /* changed infinite to forwards for better cleanup */
   opacity:0.9;
+  z-index: 1;
 }
 @keyframes floatUp{
-  from{ transform:translateY(120vh) rotate(0deg); }
+  from{ transform:translateY(110vh) rotate(0deg); }
   to{ transform:translateY(-20vh) rotate(360deg); }
 }
 </style>
 </head>
 <body>
+
 <div class="card">
-<h1>&#127808 To-Do &#x1F380</h1>
-<ul id="list"></ul>
-<input id="taskInput" placeholder="Add a task..." />
-<button onclick="addTask()">Add task</button>
+  <h1>&#127808; To-Do &#x1F380;</h1>
+  <ul id="list"></ul>
+  <input type="text" id="taskInput" placeholder="Add a task..." />
+  <button id="addBtn" onclick="addTask()">Add task</button>
 </div>
+
 <script>
 function addTask(){
   const input=document.getElementById('taskInput');
@@ -90,13 +110,25 @@ function addTask(){
 
   const li=document.createElement('li');
 
-  const checkbox=document.createElement('input');
-  checkbox.type='checkbox';
-  checkbox.style.width='18px';
-  checkbox.style.height='18px';
+  // 1. Checkbox
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.style.width = '18px';
+  checkbox.style.height = '18px';
 
-  const span=document.createElement('span');
-  span.textContent=text;
+  // 2. Task Text (using a span)
+  const span = document.createElement('span');
+  span.className = 'task-text';
+  span.textContent = text;
+
+  // 3. Delete Button (using the ? code)
+  const deleteBtn = document.createElement('button');
+  deleteBtn.innerHTML = '&#10060;';
+  deleteBtn.className = 'delete-btn';
+  
+  deleteBtn.onclick = () => {
+    li.remove();
+  };
 
   checkbox.onchange=()=>{
     span.style.textDecoration=checkbox.checked?'line-through':'none';
@@ -105,16 +137,20 @@ function addTask(){
 
   li.appendChild(checkbox);
   li.appendChild(span);
+  li.appendChild(deleteBtn);
 
   document.getElementById('list').appendChild(li);
   input.value='';
 }
 
-const input=document.getElementById('taskInput');
-input.addEventListener('keypress',function(e){ if(e.key==='Enter') addTask(); });
+const inputField=document.getElementById('taskInput');
+inputField.addEventListener('keypress',function(e){ 
+  if(e.key==='Enter') addTask(); 
+});
 
 /* floating pancakes and money */
-const emojis=['&#x1F380;','&#x1F9F8;','&#x1F9F8;','&#128184;','&#128184;','&#x1F380'];
+const emojis=['&#x1F380;','&#x1F9F8;','&#x1F9F8;','&#128184;','&#128184;','&#129374;','&#x2728;'];
+
 function createFloat(){
   const el=document.createElement('div');
   el.className='float';
@@ -127,5 +163,6 @@ function createFloat(){
 }
 setInterval(createFloat,900);
 </script>
+
 </body>
 </html>
